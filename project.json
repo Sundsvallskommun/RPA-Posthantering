@@ -1,9 +1,10 @@
 {
-  "name": "RoboticEnterpriseFramework-Windows",
+  "name": "Posthantering",
   "projectId": "1eb79e63-134a-4452-8790-0045cf712333",
-  "description": "Robotic Enterprise Framework (Windows)",
+  "description": "",
   "main": "Main.xaml",
   "dependencies": {
+    "API.Gateway_General_Windows": "[1.0.4]",
     "UiPath.Excel.Activities": "[2.22.4]",
     "UiPath.System.Activities": "[24.3.1]",
     "UiPath.Testing.Activities": "[23.10.1]",
@@ -36,7 +37,6 @@
     "projectProfile": "Developement",
     "outputType": "Process",
     "libraryOptions": {
-      "includeOriginalXaml": false,
       "privateWorkflows": []
     },
     "processOptions": {

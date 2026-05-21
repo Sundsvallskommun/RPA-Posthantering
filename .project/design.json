@@ -1,5 +1,16 @@
 {
-  "Tags": [],
+  "Tags": [
+    {
+      "Key": "Eneo"
+    },
+    {
+      "Key": "API"
+    },
+    {
+      "Key": "WSO2"
+    }
+  ],
   "SeparateRuntimeDependencies": true,
-  "IncludeSources": true
+  "IncludeSources": true,
+  "ConnectorKeys": []
 }
