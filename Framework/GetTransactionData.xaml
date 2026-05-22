@@ -292,7 +292,7 @@
     </TryCatch>
     <If Condition="[out_TransactionItem IsNot Nothing]" DisplayName="If Transaction Found" sap:VirtualizedContainerService.HintSize="526,460" sap2010:WorkflowViewState.IdRef="If_TxFound">
       <If.Then>
-        <ui:LogMessage DisplayName="Log Transaction Retrieved" sap:VirtualizedContainerService.HintSize="334,143" sap2010:WorkflowViewState.IdRef="Log_TxRetrieved" Level="Info" Message="[&quot;Transaction #&quot; + in_TransactionNumber.ToString + &quot; retrieved: &quot; + out_TransactionItem.SpecificContent(&quot;FilePath&quot;).ToString]" />
+        <ui:LogMessage DisplayName="Log Transaction Retrieved" sap:VirtualizedContainerService.HintSize="334,143" sap2010:WorkflowViewState.IdRef="Log_TxRetrieved" Level="Info" Message="[&quot;Transaction #&quot; + in_TransactionNumber.ToString + &quot; retrieved from queue.&quot;]" />
       </If.Then>
       <If.Else>
         <ui:LogMessage DisplayName="Log No More Transactions" sap:VirtualizedContainerService.HintSize="334,143" sap2010:WorkflowViewState.IdRef="Log_NoMore" Level="Info" Message="[&quot;No more transactions available in queue.&quot;]" />

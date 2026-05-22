@@ -160,7 +160,7 @@
       <AssemblyReference>UiPath.Platform</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="Process a single transaction: upload file to Eneo, start classification, poll for result, parse output.&#xA;&#xA;High-confidence files are moved into a Department sub-folder under &lt;cwd&gt;/&lt;OutputFolder&gt;/&lt;Department&gt;/ (or &lt;cwd&gt;/&lt;OutputFolder&gt;/&lt;FallbackFolder&gt;/ if Department is empty), renamed to SuggestedFilename. Low-confidence files are moved to &lt;cwd&gt;/&lt;OutputFolder&gt;/&lt;ManualReviewFolder&gt;/ — queue item is still marked Failed (Business Rule Exception) and not retried.&#xA;&#xA;Every outcome (OK / ManualReview / Error) is appended to a daily CSV log next to the input files, with the document's classification confidence score.&#xA;&#xA;Throws BusinessRuleException on low confidence, SystemException on API errors or timeout." DisplayName="Process Transaction" sap:VirtualizedContainerService.HintSize="967,12952" sap2010:WorkflowViewState.IdRef="Sequence_Main">
+  <Sequence sap2010:Annotation.AnnotationText="Process a single transaction: upload file to Eneo, start classification, poll for result, parse output.&#xA;&#xA;High-confidence files are moved into a Department sub-folder under &lt;cwd&gt;/&lt;OutputFolder&gt;/&lt;Department&gt;/ (or &lt;cwd&gt;/&lt;OutputFolder&gt;/&lt;FallbackFolder&gt;/ if Department is empty), renamed to SuggestedFilename. Low-confidence files are moved to &lt;cwd&gt;/&lt;OutputFolder&gt;/&lt;ManualReviewFolder&gt;/ — queue item is still marked Failed (Business Rule Exception) and not retried.&#xA;&#xA;Every outcome (OK / ManualReview / Error) is appended to a daily CSV log next to the input files, with the document's classification confidence score.&#xA;&#xA;Filenames are pseudonymised in UiPath/Orchestrator logs as a SHA1-prefix (FilePathHash, &quot;file:xxxxxxxx&quot;); full filenames remain in the local CSV log only. Cross-reference UiPath log lines with CSV rows via FilePathHash.&#xA;&#xA;Throws BusinessRuleException on low confidence, SystemException on API errors or timeout." DisplayName="Process Transaction" sap:VirtualizedContainerService.HintSize="967,12952" sap2010:WorkflowViewState.IdRef="Sequence_Main">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="GatewayDomainURL" />
       <Variable x:TypeArguments="x:String" Name="AppId" />
@@ -169,6 +169,7 @@
       <Variable x:TypeArguments="x:Int32" Default="60" Name="PollTimeoutSeconds" />
       <Variable x:TypeArguments="x:Int32" Default="80" Name="MinConfidencePercent" />
       <Variable x:TypeArguments="x:String" Name="FilePath" />
+      <Variable x:TypeArguments="x:String" Default="[&quot;&quot;]" Name="FilePathHash" />
       <Variable x:TypeArguments="njl:JObject" Name="UploadResult" />
       <Variable x:TypeArguments="x:String" Name="FileId" />
       <Variable x:TypeArguments="njl:JObject" Name="RunResult" />
@@ -264,6 +265,16 @@
           <InArgument x:TypeArguments="x:String">[in_TransactionItem.SpecificContent("FilePath").ToString]</InArgument>
         </Assign.Value>
       </Assign>
+      <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim bytes As Byte() = System.Text.Encoding.UTF8.GetBytes(FilePath)&#xD;&#xA;Dim sha As System.Security.Cryptography.SHA1 = System.Security.Cryptography.SHA1.Create()&#xD;&#xA;Dim hash As Byte() = sha.ComputeHash(bytes)&#xD;&#xA;FilePathHash = &quot;file:&quot; &amp; BitConverter.ToString(hash).Replace(&quot;-&quot;, &quot;&quot;).ToLowerInvariant().Substring(0, 8)" DisplayName="Compute FilePath Hash" sap:VirtualizedContainerService.HintSize="416,165" sap2010:WorkflowViewState.IdRef="InvokeCode_HashFilePath">
+        <ui:InvokeCode.Arguments>
+          <InArgument x:TypeArguments="x:String" x:Key="FilePath">
+            <VisualBasicValue x:TypeArguments="x:String" ExpressionText="FilePath" />
+          </InArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="FilePathHash">
+            <VisualBasicReference x:TypeArguments="x:String" ExpressionText="FilePathHash" />
+          </OutArgument>
+        </ui:InvokeCode.Arguments>
+      </ui:InvokeCode>
       <Assign DisplayName="Assign InputFolder from Config" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_InputFolder">
         <Assign.To>
           <OutArgument x:TypeArguments="x:String">[InputFolder]</OutArgument>
@@ -328,7 +339,7 @@
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:LogMessage DisplayName="Log Processing File" sap:VirtualizedContainerService.HintSize="496,179" sap2010:WorkflowViewState.IdRef="Log_Start" Level="Info" Message="[&quot;Processing file: &quot; + FilePath]" />
+          <ui:LogMessage DisplayName="Log Processing File" sap:VirtualizedContainerService.HintSize="496,179" sap2010:WorkflowViewState.IdRef="Log_Start" Level="Info" Message="[&quot;Processing &quot; + FilePathHash]" />
           <If Condition="[Token Is Nothing OrElse Now &gt; GlobalVariablesNamespace.GlobalVariables.TokenExpiresAt]" DisplayName="If No Token" sap:VirtualizedContainerService.HintSize="496,1014" sap2010:WorkflowViewState.IdRef="If_1">
             <If.Then>
               <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="450,777" sap2010:WorkflowViewState.IdRef="Sequence_5">
@@ -511,7 +522,7 @@
               <InArgument x:TypeArguments="x:Int32">[If(Classification("percentage") IsNot Nothing, CInt(Classification("percentage")), 0)]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:LogMessage DisplayName="Log Classification Result" sap:VirtualizedContainerService.HintSize="496,179" sap2010:WorkflowViewState.IdRef="Log_Result" Level="Info" Message="[&quot;Classification complete — Department: &quot; + Department + &quot;, Type: &quot; + DocumentType + &quot;, Filename: &quot; + SuggestedFilename + &quot;, Confidence: &quot; + Confidence.ToString + &quot;%&quot;]" />
+          <ui:LogMessage DisplayName="Log Classification Result" sap:VirtualizedContainerService.HintSize="496,179" sap2010:WorkflowViewState.IdRef="Log_Result" Level="Info" Message="[&quot;Classification complete — Department: &quot; + Department + &quot;, Type: &quot; + DocumentType + &quot;, Confidence: &quot; + Confidence.ToString + &quot;%&quot;]" />
           <If Condition="[Confidence &lt; MinConfidencePercent]" DisplayName="If Low Confidence" sap:VirtualizedContainerService.HintSize="496,1799" sap2010:WorkflowViewState.IdRef="If_LowConfidence">
             <If.Then>
               <Sequence DisplayName="Then - Manual Review" sap:VirtualizedContainerService.HintSize="450,1033" sap2010:WorkflowViewState.IdRef="Sequence_ManualReview">
@@ -528,7 +539,7 @@
                     <InArgument x:TypeArguments="x:String">["ManualReview"]</InArgument>
                   </Assign.Value>
                 </Assign>
-                <ui:LogMessage DisplayName="Log Low Confidence" sap:VirtualizedContainerService.HintSize="416,179" sap2010:WorkflowViewState.IdRef="Log_LowConf" Level="Warn" Message="[&quot;Low confidence — file moved to manual review folder. File: &quot; + FilePath + &quot;, Confidence: &quot; + Confidence.ToString + &quot;%, Threshold: &quot; + MinConfidencePercent.ToString + &quot;%, Destination: &quot; + ManualReviewFolder]" />
+                <ui:LogMessage DisplayName="Log Low Confidence" sap:VirtualizedContainerService.HintSize="416,179" sap2010:WorkflowViewState.IdRef="Log_LowConf" Level="Warn" Message="[&quot;Low confidence — file moved to manual review folder. &quot; + FilePathHash + &quot; (FileId: &quot; + FileId + &quot;), Confidence: &quot; + Confidence.ToString + &quot;%, Threshold: &quot; + MinConfidencePercent.ToString + &quot;%&quot;]" />
                 <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Manual Review Folder" sap:VirtualizedContainerService.HintSize="416,117" sap2010:WorkflowViewState.IdRef="CreateDirectory_ManualReview" Path="[ManualReviewFolder]" />
                 <Assign DisplayName="Assign TargetFilePath" sap:VirtualizedContainerService.HintSize="416,179" sap2010:WorkflowViewState.IdRef="Assign_6">
                   <Assign.To>
@@ -539,7 +550,7 @@
                   </Assign.Value>
                 </Assign>
                 <ui:MoveFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[TargetFilePath]" DisplayName="Move File" sap:VirtualizedContainerService.HintSize="416,197" sap2010:WorkflowViewState.IdRef="MoveFile_1" Overwrite="True" Path="[FilePath]" />
-                <Throw DisplayName="Throw BRE Low Confidence" Exception="[new BusinessRuleException(&quot;Classification confidence too low (&quot; + Confidence.ToString + &quot;% &lt; &quot; + MinConfidencePercent.ToString + &quot;%). File: &quot; + FilePath)]" sap:VirtualizedContainerService.HintSize="416,118" sap2010:WorkflowViewState.IdRef="Throw_LowConf" />
+                <Throw DisplayName="Throw BRE Low Confidence" Exception="[new BusinessRuleException(&quot;Classification confidence too low (&quot; + Confidence.ToString + &quot;% &lt; &quot; + MinConfidencePercent.ToString + &quot;%). &quot; + FilePathHash + &quot; FileId: &quot; + FileId)]" sap:VirtualizedContainerService.HintSize="416,118" sap2010:WorkflowViewState.IdRef="Throw_LowConf" />
               </Sequence>
             </If.Then>
             <If.Else>
@@ -560,7 +571,7 @@
                   </ui:InvokeCode.Arguments>
                 </ui:InvokeCode>
                 <ui:MoveFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[TargetFilePath]" DisplayName="Move File" sap:VirtualizedContainerService.HintSize="416,197" sap2010:WorkflowViewState.IdRef="MoveFile_2" Path="[FilePath]" />
-                <ui:LogMessage DisplayName="Log Transaction Complete" sap:VirtualizedContainerService.HintSize="416,170" sap2010:WorkflowViewState.IdRef="Log_Done" Level="Info" Message="[&quot;Transaction processed successfully. File: &quot; + FilePath + &quot; → &quot; + TargetFilePath + &quot;, Department: &quot; + If(String.IsNullOrWhiteSpace(Department), &quot;(slask)&quot;, Department) + &quot;, Confidence: &quot; + Confidence.ToString + &quot;%&quot;]" />
+                <ui:LogMessage DisplayName="Log Transaction Complete" sap:VirtualizedContainerService.HintSize="416,170" sap2010:WorkflowViewState.IdRef="Log_Done" Level="Info" Message="[&quot;Transaction processed successfully. &quot; + FilePathHash + &quot; (FileId: &quot; + FileId + &quot;), Department: &quot; + If(String.IsNullOrWhiteSpace(Department), &quot;(slask)&quot;, Department) + &quot;, Confidence: &quot; + Confidence.ToString + &quot;%&quot;]" />
               </Sequence>
             </If.Else>
           </If>
@@ -636,13 +647,16 @@
               </scg:Dictionary>
             </sap:WorkflowViewStateService.ViewState>
             <TryCatch.Try>
-              <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim invariant As System.Globalization.CultureInfo = System.Globalization.CultureInfo.InvariantCulture&#xD;&#xA;Dim logPath As String = System.IO.Path.Combine(InputFolder, &quot;klassificering_log_&quot; &amp; DateTime.Now.ToString(&quot;yyyy-MM-dd HH.mm&quot;, invariant) &amp; &quot;.csv&quot;)&#xD;&#xA;Dim enc As System.Text.Encoding = New System.Text.UTF8Encoding(True)&#xD;&#xA;Dim header As String = &quot;Timestamp;FilePath;FileId;RunId;Department;DocumentType;SuggestedFilename;Confidence;Status;TargetFilePath;ErrorMessage&quot;&#xD;&#xA;If Not System.IO.File.Exists(logPath) Then&#xD;&#xA;    System.IO.File.AppendAllText(logPath, header &amp; Environment.NewLine, enc)&#xD;&#xA;End If&#xD;&#xA;Dim safeFp As String = If(FilePath, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;).Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;)&#xD;&#xA;Dim safeFid As String = If(FileId, &quot;&quot;)&#xD;&#xA;Dim safeRid As String = If(RunId, &quot;&quot;)&#xD;&#xA;Dim safeDept As String = If(Department, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;)&#xD;&#xA;Dim safeDt As String = If(DocumentType, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;)&#xD;&#xA;Dim safeSf As String = If(SuggestedFilename, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;)&#xD;&#xA;Dim safeStatus As String = If(Status, &quot;&quot;)&#xD;&#xA;Dim safeTarFP As String = If(TargetFilePath, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;).Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;)&#xD;&#xA;Dim safeErr As String = If(ErrorMessage, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;).Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;)&#xD;&#xA;Dim ts As String = DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;, invariant)&#xD;&#xA;Dim confStr As String = Confidence.ToString(invariant)&#xD;&#xA;Dim row As String = String.Join(&quot;;&quot;, New String() { ts, safeFp, safeFid, safeRid, safeDept, safeDt, safeSf, confStr, safeStatus, safeTarFP, safeErr })&#xD;&#xA;System.IO.File.AppendAllText(logPath, row &amp; Environment.NewLine, enc)" DisplayName="Append CSV Row" sap:VirtualizedContainerService.HintSize="450,165" sap2010:WorkflowViewState.IdRef="InvokeCode_CsvAppend">
+              <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim invariant As System.Globalization.CultureInfo = System.Globalization.CultureInfo.InvariantCulture&#xD;&#xA;Dim logPath As String = System.IO.Path.Combine(InputFolder, &quot;klassificering_log_&quot; &amp; DateTime.Now.ToString(&quot;yyyy-MM-dd HH.mm&quot;, invariant) &amp; &quot;.csv&quot;)&#xD;&#xA;Dim enc As System.Text.Encoding = New System.Text.UTF8Encoding(True)&#xD;&#xA;Dim header As String = &quot;Timestamp;FilePathHash;FilePath;FileId;RunId;Department;DocumentType;SuggestedFilename;Confidence;Status;TargetFilePath;ErrorMessage&quot;&#xD;&#xA;If Not System.IO.File.Exists(logPath) Then&#xD;&#xA;    System.IO.File.AppendAllText(logPath, header &amp; Environment.NewLine, enc)&#xD;&#xA;End If&#xD;&#xA;Dim safeHash As String = If(FilePathHash, &quot;&quot;)&#xD;&#xA;Dim safeFp As String = If(FilePath, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;).Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;)&#xD;&#xA;Dim safeFid As String = If(FileId, &quot;&quot;)&#xD;&#xA;Dim safeRid As String = If(RunId, &quot;&quot;)&#xD;&#xA;Dim safeDept As String = If(Department, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;)&#xD;&#xA;Dim safeDt As String = If(DocumentType, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;)&#xD;&#xA;Dim safeSf As String = If(SuggestedFilename, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;)&#xD;&#xA;Dim safeStatus As String = If(Status, &quot;&quot;)&#xD;&#xA;Dim safeTarFP As String = If(TargetFilePath, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;).Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;)&#xD;&#xA;Dim safeErr As String = If(ErrorMessage, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;).Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;)&#xD;&#xA;Dim ts As String = DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;, invariant)&#xD;&#xA;Dim confStr As String = Confidence.ToString(invariant)&#xD;&#xA;Dim row As String = String.Join(&quot;;&quot;, New String() { ts, safeHash, safeFp, safeFid, safeRid, safeDept, safeDt, safeSf, confStr, safeStatus, safeTarFP, safeErr })&#xD;&#xA;System.IO.File.AppendAllText(logPath, row &amp; Environment.NewLine, enc)" DisplayName="Append CSV Row" sap:VirtualizedContainerService.HintSize="450,165" sap2010:WorkflowViewState.IdRef="InvokeCode_CsvAppend">
                 <ui:InvokeCode.Arguments>
                   <InArgument x:TypeArguments="x:String" x:Key="InputFolder">
                     <VisualBasicValue x:TypeArguments="x:String" ExpressionText="InputFolder" />
                   </InArgument>
                   <InArgument x:TypeArguments="x:String" x:Key="FilePath">
                     <VisualBasicValue x:TypeArguments="x:String" ExpressionText="FilePath" />
+                  </InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="FilePathHash">
+                    <VisualBasicValue x:TypeArguments="x:String" ExpressionText="FilePathHash" />
                   </InArgument>
                   <InArgument x:TypeArguments="x:String" x:Key="FileId">
                     <VisualBasicValue x:TypeArguments="x:String" ExpressionText="FileId" />
