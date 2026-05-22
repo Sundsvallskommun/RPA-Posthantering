@@ -1,93 +1,456 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Process" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Process" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:a="clr-namespace:API_Gateway_General_Windows;assembly=API Gateway_General_Windows" xmlns:aa="clr-namespace:APIGateway_Eneo.Apps;assembly=APIGateway_Eneo" xmlns:aa1="clr-namespace:APIGateway_Eneo.App_Runs;assembly=APIGateway_Eneo" xmlns:af="clr-namespace:APIGateway_Eneo.Files;assembly=APIGateway_Eneo" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:njl="clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:si="clr-namespace:System.IO;assembly=System.Private.CoreLib" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
-    <x:Property sap2010:Annotation.AnnotationText="Transaction item to be processed." Name="in_TransactionItem" Type="InArgument(ui:QueueItem)" />
-    <x:Property sap2010:Annotation.AnnotationText="Dictionary structure to store configuration data of the process (settings, constants and assets)." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property Name="in_TransactionItem" Type="InArgument(ui:QueueItem)">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))">
+      <x:Property.Attributes>
+        <RequiredArgumentAttribute />
+      </x:Property.Attributes>
+    </x:Property>
   </x:Members>
   <VisualBasic.Settings>
     <x:Null />
   </VisualBasic.Settings>
-  <sap:VirtualizedContainerService.HintSize>932,989</sap:VirtualizedContainerService.HintSize>
-  <sap2010:WorkflowViewState.IdRef>ProcessTransaction_1</sap2010:WorkflowViewState.IdRef>
+  <sap:VirtualizedContainerService.HintSize>1048,3200</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
-    <scg:List x:TypeArguments="x:String" Capacity="50">
-      <x:String>Microsoft.VisualBasic</x:String>
-      <x:String>Microsoft.VisualBasic.Activities</x:String>
+    <sco:Collection x:TypeArguments="x:String">
       <x:String>System</x:String>
       <x:String>System.Activities</x:String>
-      <x:String>System.Activities.Expressions</x:String>
       <x:String>System.Activities.Statements</x:String>
-      <x:String>System.Activities.Validation</x:String>
-      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>System.Activities.Expressions</x:String>
       <x:String>System.Collections</x:String>
       <x:String>System.Collections.Generic</x:String>
       <x:String>System.Collections.ObjectModel</x:String>
       <x:String>System.Data</x:String>
-      <x:String>System.Diagnostics</x:String>
-      <x:String>System.Drawing</x:String>
       <x:String>System.IO</x:String>
       <x:String>System.Linq</x:String>
-      <x:String>System.Net.Mail</x:String>
-      <x:String>System.Runtime.InteropServices</x:String>
-      <x:String>System.Runtime.Serialization</x:String>
-      <x:String>System.Windows.Forms</x:String>
-      <x:String>System.Windows.Markup</x:String>
-      <x:String>System.Xml</x:String>
-      <x:String>System.Xml.Linq</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>Newtonsoft.Json</x:String>
+      <x:String>Newtonsoft.Json.Linq</x:String>
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Dynamic</x:String>
+      <x:String>System.ComponentModel</x:String>
+      <x:String>System.Collections.Specialized</x:String>
+      <x:String>APIGateway_Eneo.Files</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
+      <x:String>System.Runtime.InteropServices</x:String>
+      <x:String>System.Reflection</x:String>
+      <x:String>UiPath.Web</x:String>
+      <x:String>UiPath.Web.Activities</x:String>
+      <x:String>System.Xml.Serialization</x:String>
+      <x:String>System.Security</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Net</x:String>
+      <x:String>System.Linq.Expressions</x:String>
+      <x:String>API_Gateway_General_Windows</x:String>
+      <x:String>APIGateway_Eneo.Apps</x:String>
+      <x:String>APIGateway_Eneo.App_Runs</x:String>
+      <x:String>System.Numerics</x:String>
+      <x:String>UiPath.Shared.Activities</x:String>
       <x:String>GlobalVariablesNamespace</x:String>
       <x:String>GlobalConstantsNamespace</x:String>
-    </scg:List>
+    </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
-    <scg:List x:TypeArguments="AssemblyReference" Capacity="40">
-      <AssemblyReference>Microsoft.Bcl.AsyncInterfaces</AssemblyReference>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="128">
       <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
-      <AssemblyReference>PresentationCore</AssemblyReference>
-      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>Newtonsoft.Json</AssemblyReference>
       <AssemblyReference>System</AssemblyReference>
       <AssemblyReference>System.Activities</AssemblyReference>
       <AssemblyReference>System.Collections</AssemblyReference>
       <AssemblyReference>System.ComponentModel</AssemblyReference>
-      <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
       <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
-      <AssemblyReference>System.Configuration.ConfigurationManager</AssemblyReference>
-      <AssemblyReference>System.Console</AssemblyReference>
       <AssemblyReference>System.Core</AssemblyReference>
       <AssemblyReference>System.Data</AssemblyReference>
       <AssemblyReference>System.Data.Common</AssemblyReference>
-      <AssemblyReference>System.Drawing</AssemblyReference>
       <AssemblyReference>System.Linq</AssemblyReference>
       <AssemblyReference>System.Memory</AssemblyReference>
       <AssemblyReference>System.ObjectModel</AssemblyReference>
       <AssemblyReference>System.Private.CoreLib</AssemblyReference>
-      <AssemblyReference>System.Private.Uri</AssemblyReference>
       <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
-      <AssemblyReference>System.Security.Permissions</AssemblyReference>
-      <AssemblyReference>System.ServiceModel</AssemblyReference>
-      <AssemblyReference>System.ValueTuple</AssemblyReference>
-      <AssemblyReference>System.Windows.Forms</AssemblyReference>
-      <AssemblyReference>System.Xaml</AssemblyReference>
       <AssemblyReference>System.Xml</AssemblyReference>
       <AssemblyReference>System.Xml.Linq</AssemblyReference>
-      <AssemblyReference>UiPath.Excel</AssemblyReference>
-      <AssemblyReference>UiPath.OCR.Activities.Design</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
-      <AssemblyReference>UiPath.System.Activities.Design</AssemblyReference>
       <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
-      <AssemblyReference>UiPath.UIAutomationCore</AssemblyReference>
-      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
+      <AssemblyReference>System.Linq.Expressions</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.EventBasedAsync</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
       <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Primitives</AssemblyReference>
+      <AssemblyReference>System.Collections.Specialized</AssemblyReference>
+      <AssemblyReference>System.Collections.NonGeneric</AssemblyReference>
+      <AssemblyReference>APIGateway_Eneo</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+      <AssemblyReference>Microsoft.PowerShell.Commands.Diagnostics</AssemblyReference>
+      <AssemblyReference>System.Diagnostics.FileVersionInfo</AssemblyReference>
+      <AssemblyReference>System.Security.Permissions</AssemblyReference>
+      <AssemblyReference>System.Diagnostics.Process</AssemblyReference>
+      <AssemblyReference>System.Diagnostics.DiagnosticSource</AssemblyReference>
+      <AssemblyReference>System.Diagnostics.TraceSource</AssemblyReference>
+      <AssemblyReference>System.Configuration.ConfigurationManager</AssemblyReference>
+      <AssemblyReference>System.Diagnostics.EventLog</AssemblyReference>
+      <AssemblyReference>System.Diagnostics.PerformanceCounter</AssemblyReference>
+      <AssemblyReference>System.Diagnostics.TextWriterTraceListener</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Private.Xml</AssemblyReference>
+      <AssemblyReference>System.Private.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Private.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+      <AssemblyReference>System.Windows.Forms.Design</AssemblyReference>
+      <AssemblyReference>System.Collections.Immutable</AssemblyReference>
+      <AssemblyReference>System.Runtime.InteropServices</AssemblyReference>
+      <AssemblyReference>System.Reflection.DispatchProxy</AssemblyReference>
+      <AssemblyReference>System.Reflection.TypeExtensions</AssemblyReference>
+      <AssemblyReference>System.Reflection.Metadata</AssemblyReference>
+      <AssemblyReference>System.Reflection.MetadataLoadContext</AssemblyReference>
+      <AssemblyReference>UiPath.Web</AssemblyReference>
+      <AssemblyReference>UiPath.Web.Activities</AssemblyReference>
+      <AssemblyReference>System.Text.Encoding.CodePages</AssemblyReference>
+      <AssemblyReference>System.Net.Primitives</AssemblyReference>
+      <AssemblyReference>System.Net.HttpListener</AssemblyReference>
+      <AssemblyReference>System.Net.WebProxy</AssemblyReference>
+      <AssemblyReference>System.Net.NameResolution</AssemblyReference>
+      <AssemblyReference>System.Net.WebHeaderCollection</AssemblyReference>
+      <AssemblyReference>System.Net.WebClient</AssemblyReference>
+      <AssemblyReference>System.Net.Requests</AssemblyReference>
+      <AssemblyReference>System.Net.ServicePoint</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>NPOI</AssemblyReference>
+      <AssemblyReference>System.Console</AssemblyReference>
+      <AssemblyReference>System.Private.Uri</AssemblyReference>
+      <AssemblyReference>API Gateway_General_Windows</AssemblyReference>
+      <AssemblyReference>System.Runtime.Numerics</AssemblyReference>
+      <AssemblyReference>UiPath.OCR.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationCore</AssemblyReference>
+      <AssemblyReference>UiPath.Testing.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.Watcher</AssemblyReference>
+      <AssemblyReference>System.IO.Packaging</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.AccessControl</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.DriveInfo</AssemblyReference>
+      <AssemblyReference>System.CodeDom</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Forms</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Memory.Data</AssemblyReference>
+      <AssemblyReference>Microsoft.Extensions.DependencyModel</AssemblyReference>
+      <AssemblyReference>System.Linq.Async</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="Invoke major steps of the business process, which are usually implemented by multiple subworkflows.&#xA;&#xA;If a BusinessRuleException is thrown, the transaction is skipped. &#xA;If another kind of exception occurs, the current transaction can be retried. " DisplayName="Process" sap:VirtualizedContainerService.HintSize="450,435" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Process a single transaction: upload file to Eneo, start classification, poll for result, parse output.&#xA;&#xA;Throws BusinessRuleException if confidence is below threshold.&#xA;Throws SystemException on API errors or timeout." DisplayName="Process Transaction" sap:VirtualizedContainerService.HintSize="967,9046" sap2010:WorkflowViewState.IdRef="Sequence_Main">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="GatewayDomainURL" />
+      <Variable x:TypeArguments="x:String" Name="AppId" />
+      <Variable x:TypeArguments="x:String" Name="Version" />
+      <Variable x:TypeArguments="x:Int32" Default="3" Name="PollIntervalSeconds" />
+      <Variable x:TypeArguments="x:Int32" Default="60" Name="PollTimeoutSeconds" />
+      <Variable x:TypeArguments="x:Int32" Default="80" Name="MinConfidencePercent" />
+      <Variable x:TypeArguments="x:String" Name="FilePath" />
+      <Variable x:TypeArguments="njl:JObject" Name="UploadResult" />
+      <Variable x:TypeArguments="x:String" Name="FileId" />
+      <Variable x:TypeArguments="njl:JObject" Name="RunResult" />
+      <Variable x:TypeArguments="x:String" Name="RunId" />
+      <Variable x:TypeArguments="njl:JObject" Name="PollResult" />
+      <Variable x:TypeArguments="x:String" Default="[&quot;&quot;]" Name="RunStatus" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="PollCount" />
+      <Variable x:TypeArguments="x:Int32" Name="MaxPolls" />
+      <Variable x:TypeArguments="x:String" Name="OutputRaw" />
+      <Variable x:TypeArguments="njl:JObject" Name="Classification" />
+      <Variable x:TypeArguments="x:String" Name="SuggestedFilename" />
+      <Variable x:TypeArguments="x:String" Name="Department" />
+      <Variable x:TypeArguments="x:String" Name="DocumentType" />
+      <Variable x:TypeArguments="x:Int32" Name="Confidence" />
+      <Variable x:TypeArguments="x:String" Name="GatewayEneoUsername" />
+      <Variable x:TypeArguments="ss:SecureString" Name="GatewayEneoPassword" />
+      <Variable x:TypeArguments="ss:SecureString" Name="ApiKey" />
+      <Variable x:TypeArguments="njl:JObject" Name="NewFileName" />
+      <Variable x:TypeArguments="si:FileInfo" Name="FileInfo" />
+      <Variable x:TypeArguments="x:String" Name="FileExtension" />
+    </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
         <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:LogMessage DisplayName="Log Message Process Start" sap:VirtualizedContainerService.HintSize="388,141" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Started Process&quot;]" />
-    <ui:Comment DisplayName="Comment (placeholder)" sap:VirtualizedContainerService.HintSize="388,56" sap2010:WorkflowViewState.IdRef="Comment_1" Text="//  Invoke steps of the process." />
+    <Sequence DisplayName="Assign Values" sap:VirtualizedContainerService.HintSize="496,1845" sap2010:WorkflowViewState.IdRef="Sequence_1">
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <Assign DisplayName="Assign DomainURL from Config" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_DomainURL">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:String">[GatewayDomainURL]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:String">[in_Config("ApiGatewayDomainURL").ToString]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <Assign DisplayName="Assign AppId from Config" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_1">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:String">[AppId]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:String">[in_Config("Eneo_AppId").ToString]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <Assign DisplayName="Assign Version from Config" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_Version">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:String">[Version]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:String">[in_Config("Eneo_Version").ToString]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <Assign DisplayName="Assign PollIntervalSeconds" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_PollInterval">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:Int32">[PollIntervalSeconds]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:Int32">[CInt(in_Config("Eneo_PollIntervalSeconds"))]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <Assign DisplayName="Assign PollTimeoutSeconds" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_PollTimeout">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:Int32">[PollTimeoutSeconds]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:Int32">[CInt(in_Config("Eneo_PollTimeoutSeconds"))]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <Assign DisplayName="Assign MinConfidencePercent" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_MinConf">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:Int32">[MinConfidencePercent]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:Int32">[CInt(in_Config("Eneo_MinConfidencePercent"))]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <Assign DisplayName="Calculate MaxPolls" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_MaxPolls">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:Int32">[MaxPolls]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:Int32">[CInt(Math.Ceiling(CDbl(PollTimeoutSeconds) / CDbl(PollIntervalSeconds)))]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <Assign DisplayName="Get FilePath from QueueItem" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_FilePath">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:String">[FilePath]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:String">[in_TransactionItem.SpecificContent("FilePath").ToString]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <ui:GetRobotCredential TimeoutMS="{x:Null}" Username="{x:Null}" AssetName="Cred_NA_EneoApiKey" CacheStrategy="None" DisplayName="Get Api Key from Credential" sap:VirtualizedContainerService.HintSize="416,181" sap2010:WorkflowViewState.IdRef="GetRobotCredential_1" Password="[ApiKey]" />
+      <ui:GetRobotCredential TimeoutMS="{x:Null}" AssetName="Cred_NA_ApiGateway" CacheStrategy="Execution" DisplayName="Get Eneo Key And Secret from Credential" sap:VirtualizedContainerService.HintSize="416,172" sap2010:WorkflowViewState.IdRef="GetRobotCredential_2" Password="[GatewayEneoPassword]" Username="[GatewayEneoUsername]" />
+    </Sequence>
+    <ui:LogMessage DisplayName="Log Processing File" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Log_Start" Level="Info" Message="[&quot;Processing file: &quot; + FilePath]" />
+    <If Condition="[Token Is Nothing OrElse Now &gt; GlobalVariablesNamespace.GlobalVariables.TokenExpiresAt]" DisplayName="If No Token" sap:VirtualizedContainerService.HintSize="496,1002" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="450,773" sap2010:WorkflowViewState.IdRef="Sequence_5">
+          <Sequence.Variables>
+            <Variable x:TypeArguments="x:Int32" Name="TokenExpiresIn" />
+          </Sequence.Variables>
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <a:Get_Token FoundToken="{x:Null}" TokenType="{x:Null}" DisplayName="Get Token" DomainURL="[GatewayDomainURL]" ExpiresIn="[TokenExpiresIn]" sap:VirtualizedContainerService.HintSize="416,543" sap2010:WorkflowViewState.IdRef="Get_Token_1" NumberOfTries="3" Password="[GatewayEneoPassword]" RequestTimeout="15000" Token="[GlobalVariablesNamespace.GlobalVariables.Token]" Username="[GatewayEneoUsername]" />
+          <Assign DisplayName="Assign TokenExpiresAt" sap:VirtualizedContainerService.HintSize="416,170" sap2010:WorkflowViewState.IdRef="Assign_3">
+            <Assign.To>
+              <OutArgument x:TypeArguments="s:DateTime">[GlobalVariablesNamespace.GlobalVariables.TokenExpiresAt]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="s:DateTime">[Now.AddSeconds(TokenExpiresIn)]</InArgument>
+            </Assign.Value>
+          </Assign>
+        </Sequence>
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Else" sap:VirtualizedContainerService.HintSize="450,90" sap2010:WorkflowViewState.IdRef="Sequence_6">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+        </Sequence>
+      </If.Else>
+    </If>
+    <af:Post_File ApiKey="[new NetworkCredential(&quot;&quot;,ApiKey).Password]" DisplayName="Post File" DomainURL="[GatewayDomainURL]" FilePath="[FilePath]" sap:VirtualizedContainerService.HintSize="496,435" sap2010:WorkflowViewState.IdRef="Post_File_1" NumberOfRetries="3" Response="[UploadResult]" Token="[GlobalVariablesNamespace.GlobalVariables.Token]" Version="[Version]" />
+    <Assign DisplayName="Extract FileId" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_FileId">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[FileId]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[UploadResult("id").ToString]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:LogMessage DisplayName="Log File Uploaded" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Log_Uploaded" Level="Info" Message="[&quot;File uploaded. FileId: &quot; + FileId]" />
+    <aa:Post_Runs ApiKey="[new NetworkCredential(&quot;&quot;,ApiKey).Password]" AppId="[AppId]" DisplayName="Post Runs" DomainURL="[GatewayDomainURL]" FileId="[FileId]" sap:VirtualizedContainerService.HintSize="496,487" sap2010:WorkflowViewState.IdRef="Post_Runs_1" NumberOfRetries="3" Response="[RunResult]" Token="[GlobalVariablesNamespace.GlobalVariables.Token]" Version="[Version]" />
+    <Assign DisplayName="Extract RunId" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_RunId">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[RunId]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[RunResult("id").ToString]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:LogMessage DisplayName="Log Run Started" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Log_RunStarted" Level="Info" Message="[&quot;Classification run started. RunId: &quot; + RunId]" />
+    <DoWhile DisplayName="Poll Until Complete or Timeout" sap:VirtualizedContainerService.HintSize="496,1332" sap2010:WorkflowViewState.IdRef="DoWhile_Poll" Condition="[RunStatus &lt;&gt; &quot;complete&quot; AndAlso RunStatus &lt;&gt; &quot;failed&quot; AndAlso PollCount &lt; MaxPolls]">
+      <Sequence DisplayName="Poll Iteration" sap:VirtualizedContainerService.HintSize="450,1134" sap2010:WorkflowViewState.IdRef="Sequence_PollBody">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+        <Delay DisplayName="Wait Before Poll" Duration="[TimeSpan.FromSeconds(PollIntervalSeconds)]" sap:VirtualizedContainerService.HintSize="416,123" sap2010:WorkflowViewState.IdRef="Delay_Poll" />
+        <aa1:Get_App_Runs ApiKey="[new NetworkCredential(&quot;&quot;,ApiKey).Password]" DisplayName="Get App Runs" DomainURL="[GatewayDomainURL]" sap:VirtualizedContainerService.HintSize="416,435" sap2010:WorkflowViewState.IdRef="Get_App_Runs_1" NumberOfRetries="3" Response="[PollResult]" RunId="[RunId]" Token="[GlobalVariablesNamespace.GlobalVariables.Token]" Version="[Version]" />
+        <Assign DisplayName="Extract RunStatus" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_RunStatus">
+          <Assign.To>
+            <OutArgument x:TypeArguments="x:String">[RunStatus]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="x:String">[PollResult("status").ToString]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <Assign DisplayName="Increment PollCount" sap:VirtualizedContainerService.HintSize="416,175" sap2010:WorkflowViewState.IdRef="Assign_PollCount">
+          <Assign.To>
+            <OutArgument x:TypeArguments="x:Int32">[PollCount]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="x:Int32">[PollCount + 1]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <ui:LogMessage DisplayName="Log Poll Status" sap:VirtualizedContainerService.HintSize="416,166" sap2010:WorkflowViewState.IdRef="Log_PollStatus" Level="Trace" Message="[&quot;Poll &quot; + PollCount.ToString + &quot;/&quot; + MaxPolls.ToString + &quot; — Status: &quot; + RunStatus]" />
+      </Sequence>
+    </DoWhile>
+    <If Condition="[RunStatus = &quot;failed&quot;]" DisplayName="If Run Failed" sap:VirtualizedContainerService.HintSize="496,346" sap2010:WorkflowViewState.IdRef="If_Failed">
+      <If.Then>
+        <Throw DisplayName="Throw Run Failed" Exception="[new System.Exception(&quot;Eneo classification run failed. RunId: &quot; + RunId + &quot;. Output: &quot; + If(PollResult IsNot Nothing, PollResult(&quot;output&quot;).ToString, &quot;N/A&quot;))]" sap:VirtualizedContainerService.HintSize="450,91" sap2010:WorkflowViewState.IdRef="Throw_Failed" />
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Else" sap:VirtualizedContainerService.HintSize="450,94" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+        </Sequence>
+      </If.Else>
+    </If>
+    <If Condition="[RunStatus &lt;&gt; &quot;complete&quot;]" DisplayName="If Poll Timeout" sap:VirtualizedContainerService.HintSize="496,346" sap2010:WorkflowViewState.IdRef="If_Timeout">
+      <If.Then>
+        <Throw DisplayName="Throw Timeout" Exception="[new System.Exception(&quot;Eneo classification timed out after &quot; + PollTimeoutSeconds.ToString + &quot;s. RunId: &quot; + RunId)]" sap:VirtualizedContainerService.HintSize="450,91" sap2010:WorkflowViewState.IdRef="Throw_Timeout" />
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Else" sap:VirtualizedContainerService.HintSize="450,94" sap2010:WorkflowViewState.IdRef="Sequence_3">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+        </Sequence>
+      </If.Else>
+    </If>
+    <Assign DisplayName="Get Raw Output" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_OutputRaw">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[OutputRaw]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(PollResult("output") IsNot Nothing, PollResult("output").ToString, "")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim m As System.Text.RegularExpressions.Match = System.Text.RegularExpressions.Regex.Match(OutputRaw, &quot;\{.*\}&quot;, System.Text.RegularExpressions.RegexOptions.Singleline)&#xD;&#xA;If Not m.Success Then&#xD;&#xA;    Throw New System.Exception(&quot;No JSON object found in Eneo output: &quot; + OutputRaw.Substring(0, Math.Min(200, OutputRaw.Length)))&#xD;&#xA;End If&#xD;&#xA;Classification = Newtonsoft.Json.Linq.JObject.Parse(m.Value)" DisplayName="Parse FileName JSON" sap:VirtualizedContainerService.HintSize="496,197" sap2010:WorkflowViewState.IdRef="InvokeCode_Parse">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="OutputRaw">
+          <VisualBasicValue x:TypeArguments="x:String" ExpressionText="OutputRaw" />
+        </InArgument>
+        <OutArgument x:TypeArguments="njl:JObject" x:Key="Classification">
+          <VisualBasicReference x:TypeArguments="njl:JObject" ExpressionText="Classification" />
+        </OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <Assign DisplayName="Extract SuggestedFilename" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_Filename">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[SuggestedFilename]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(Classification("filename") IsNot Nothing, Classification("filename").ToString, "")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Extract Department" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_Department">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[Department]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(Classification("department") IsNot Nothing, Classification("department").ToString, "")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Extract DocumentType" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_DocType">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[DocumentType]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(Classification("document_type") IsNot Nothing, Classification("document_type").ToString, "")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Extract Confidence" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_Confidence">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[Confidence]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[If(Classification("percentage") IsNot Nothing, CInt(Classification("percentage")), 0)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:LogMessage DisplayName="Log Classification Result" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Log_Result" Level="Info" Message="[&quot;Classification complete — Department: &quot; + Department + &quot;, Type: &quot; + DocumentType + &quot;, Filename: &quot; + SuggestedFilename + &quot;, Confidence: &quot; + Confidence.ToString + &quot;%&quot;]" />
+    <If Condition="[Confidence &lt; MinConfidencePercent]" DisplayName="If Low Confidence" sap:VirtualizedContainerService.HintSize="496,346" sap2010:WorkflowViewState.IdRef="If_LowConfidence">
+      <If.Then>
+        <Throw DisplayName="Throw BRE Low Confidence" Exception="[new BusinessRuleException(&quot;Classification confidence too low (&quot; + Confidence.ToString + &quot;% &lt; &quot; + MinConfidencePercent.ToString + &quot;%). File: &quot; + FilePath)]" sap:VirtualizedContainerService.HintSize="450,91" sap2010:WorkflowViewState.IdRef="Throw_LowConf" />
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Else" sap:VirtualizedContainerService.HintSize="450,94" sap2010:WorkflowViewState.IdRef="Sequence_4">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+        </Sequence>
+      </If.Else>
+    </If>
+    <ui:GetFileInfoX DisplayName="Get File Info" FilePath="[FilePath]" sap:VirtualizedContainerService.HintSize="496,167" sap2010:WorkflowViewState.IdRef="GetFileInfoX_1" Output="[FileInfo]" />
+    <Assign DisplayName="Assign Extension" sap:VirtualizedContainerService.HintSize="496,175" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[FileExtension]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[FileInfo.Extension]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:RenameFileX DisplayName="Rename File" FilePath="[FilePath]" sap:VirtualizedContainerService.HintSize="496,177" sap2010:WorkflowViewState.IdRef="RenameFileX_1" KeepExtension="True" NewName="[SuggestedFilename]" />
+    <ui:LogMessage DisplayName="Log Transaction Complete" sap:VirtualizedContainerService.HintSize="496,166" sap2010:WorkflowViewState.IdRef="Log_Done" Level="Info" Message="[&quot;Transaction processed successfully. File: &quot; + FilePath + &quot; → &quot; + SuggestedFilename]" />
   </Sequence>
 </Activity>
