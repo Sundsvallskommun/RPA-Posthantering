@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="GetTransactionData" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="GetTransactionData" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:si="clr-namespace:System.IO;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property sap2010:Annotation.AnnotationText="Allow the optional addition of information about the transaction item." Name="out_TransactionField2" Type="OutArgument(x:String)" />
     <x:Property sap2010:Annotation.AnnotationText="Allow the optional addition of information about the transaction item." Name="out_TransactionField1" Type="OutArgument(x:String)" />
@@ -86,9 +86,13 @@
       <AssemblyReference>System.Memory.Data</AssemblyReference>
       <AssemblyReference>Microsoft.Extensions.DependencyModel</AssemblyReference>
       <AssemblyReference>System.Linq.Async</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.Watcher</AssemblyReference>
+      <AssemblyReference>System.IO.Packaging</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.AccessControl</AssemblyReference>
+      <AssemblyReference>System.IO.FileSystem.DriveInfo</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="Combined dispatcher/performer pattern.&#xA;First iteration populates queue from folder if needed.&#xA;Every iteration fetches next queue item." DisplayName="Get Transaction Data" sap:VirtualizedContainerService.HintSize="967,4729" sap2010:WorkflowViewState.IdRef="Sequence_Main">
+  <Sequence sap2010:Annotation.AnnotationText="Combined dispatcher/performer pattern.&#xA;First iteration populates queue from folder if needed.&#xA;Every iteration fetches next queue item." DisplayName="Get Transaction Data" sap:VirtualizedContainerService.HintSize="967,4900" sap2010:WorkflowViewState.IdRef="Sequence_Main">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="QueueName" />
       <Variable x:TypeArguments="x:String" Name="QueueFolder" />
@@ -120,9 +124,9 @@
         <InArgument x:TypeArguments="x:String">[in_Config("OrchestratorQueueFolder").ToString]</InArgument>
       </Assign.Value>
     </Assign>
-    <If Condition="[in_TransactionNumber = 1]" DisplayName="If First Transaction" sap:VirtualizedContainerService.HintSize="526,2959" sap2010:WorkflowViewState.IdRef="If_FirstTx">
+    <If Condition="[in_TransactionNumber = 1]" DisplayName="If First Transaction" sap:VirtualizedContainerService.HintSize="526,3130" sap2010:WorkflowViewState.IdRef="If_FirstTx">
       <If.Then>
-        <Sequence DisplayName="Check Queue and Populate if Empty" sap:VirtualizedContainerService.HintSize="524,2726" sap2010:WorkflowViewState.IdRef="Sequence_Dispatch">
+        <Sequence DisplayName="Check Queue and Populate if Empty" sap:VirtualizedContainerService.HintSize="524,2897" sap2010:WorkflowViewState.IdRef="Sequence_Dispatch">
           <Sequence.Variables>
             <Variable x:TypeArguments="scg:IEnumerable(ui:QueueItem)" Name="NewQueueItems" />
           </Sequence.Variables>
@@ -131,7 +135,7 @@
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:GetQueueItems Duration="{x:Null}" From="{x:Null}" Priority="{x:Null}" Reference="{x:Null}" Skip="{x:Null}" TimeoutMS="{x:Null}" To="{x:Null}" Top="{x:Null}" DisplayName="Get Queue Items" FilterStrategy="Equals" FolderPath="[in_Config(&quot;OrchestratorQueueFolder&quot;).ToString]" sap:VirtualizedContainerService.HintSize="490,180" sap2010:WorkflowViewState.IdRef="GetQueueItems_1" QueueItemStates="New" QueueName="[in_Config(&quot;OrchestratorQueueName&quot;).ToString]" Result="[PendingItems]" />
+          <ui:GetQueueItems Duration="{x:Null}" From="{x:Null}" Priority="{x:Null}" Reference="{x:Null}" Skip="{x:Null}" TimeoutMS="{x:Null}" To="{x:Null}" Top="{x:Null}" DisplayName="Get Queue Items" FilterStrategy="Equals" FolderPath="[QueueFolder]" sap:VirtualizedContainerService.HintSize="490,180" sap2010:WorkflowViewState.IdRef="GetQueueItems_1" QueueItemStates="New" QueueName="[QueueName]" Result="[PendingItems]" />
           <Assign DisplayName="Count Pending Items" sap:VirtualizedContainerService.HintSize="490,179" sap2010:WorkflowViewState.IdRef="Assign_PendingCount">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Int32">[PendingCount]</OutArgument>
@@ -140,9 +144,9 @@
               <InArgument x:TypeArguments="x:Int32">[If(PendingItems IsNot Nothing, PendingItems.Count(), 0)]</InArgument>
             </Assign.Value>
           </Assign>
-          <If Condition="[PendingCount = 0]" DisplayName="If Queue Is Empty" sap:VirtualizedContainerService.HintSize="490,2303" sap2010:WorkflowViewState.IdRef="If_QueueEmpty">
+          <If Condition="[PendingCount = 0]" DisplayName="If Queue Is Empty" sap:VirtualizedContainerService.HintSize="490,2474" sap2010:WorkflowViewState.IdRef="If_QueueEmpty">
             <If.Then>
-              <Sequence DisplayName="Populate Queue from Folder" sap:VirtualizedContainerService.HintSize="488,2004" sap2010:WorkflowViewState.IdRef="Sequence_Populate">
+              <Sequence DisplayName="Populate Queue from Folder" sap:VirtualizedContainerService.HintSize="488,2175" sap2010:WorkflowViewState.IdRef="Sequence_Populate">
                 <Sequence.Variables>
                   <Variable x:TypeArguments="s:String[]" Name="FilePaths" />
                 </Sequence.Variables>
@@ -177,23 +181,28 @@
                   </Assign.Value>
                 </Assign>
                 <ui:LogMessage DisplayName="Log Files Found" sap:VirtualizedContainerService.HintSize="454,179" sap2010:WorkflowViewState.IdRef="Log_FilesFound" Level="Info" Message="[&quot;Found &quot; + FilePaths.Length.ToString + &quot; file(s) in &quot; + InputFolder]" />
-                <If Condition="[FilePaths.Length &gt; 0]" DisplayName="If Files Found" sap:VirtualizedContainerService.HintSize="454,875" sap2010:WorkflowViewState.IdRef="If_FilesFound">
+                <If Condition="[FilePaths.Length &gt; 0]" DisplayName="If Files Found" sap:VirtualizedContainerService.HintSize="454,1046" sap2010:WorkflowViewState.IdRef="If_FilesFound">
                   <If.Then>
-                    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="452,616" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[FilePaths]">
+                    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="452,787" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[FilePaths]">
                       <ui:ForEach.Body>
                         <ActivityAction x:TypeArguments="x:String">
                           <ActivityAction.Argument>
                             <DelegateInArgument x:TypeArguments="x:String" Name="file" />
                           </ActivityAction.Argument>
-                          <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="450,466" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                          <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="450,637" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                            <Sequence.Variables>
+                              <Variable x:TypeArguments="si:FileInfo" Name="FileInfo" />
+                            </Sequence.Variables>
                             <sap:WorkflowViewStateService.ViewState>
                               <scg:Dictionary x:TypeArguments="x:String, x:Object">
                                 <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                               </scg:Dictionary>
                             </sap:WorkflowViewStateService.ViewState>
-                            <ui:AddQueueItem ServiceBaseAddress="{x:Null}" TimeoutMS="{x:Null}" DisplayName="Add Queue Item" FolderPath="[in_Config(&quot;OrchestratorQueueFolder&quot;).ToString]" sap:VirtualizedContainerService.HintSize="416,232" sap2010:WorkflowViewState.IdRef="AddQueueItem_1" Priority="Normal" QueueType="[in_Config(&quot;OrchestratorQueueName&quot;).ToString]">
+                            <ui:GetFileInfoX DisplayName="Get File Info" FilePath="[file]" sap:VirtualizedContainerService.HintSize="416,171" sap2010:WorkflowViewState.IdRef="GetFileInfoX_1" Output="[FileInfo]" />
+                            <ui:AddQueueItem ServiceBaseAddress="{x:Null}" TimeoutMS="{x:Null}" DisplayName="Add Queue Item" FolderPath="[QueueFolder]" sap:VirtualizedContainerService.HintSize="416,232" sap2010:WorkflowViewState.IdRef="AddQueueItem_1" Priority="Normal" QueueType="[QueueName]">
                               <ui:AddQueueItem.ItemInformation>
                                 <InArgument x:TypeArguments="x:String" x:Key="FilePath">[file]</InArgument>
+                                <InArgument x:TypeArguments="x:String" x:Key="CreationDate">[FileInfo.CreationTime.ToString("yyyy-MM-dd")]</InArgument>
                               </ui:AddQueueItem.ItemInformation>
                             </ui:AddQueueItem>
                             <Assign DisplayName="Increment AddedCount" sap:VirtualizedContainerService.HintSize="416,170" sap2010:WorkflowViewState.IdRef="Assign_AddedCount">
@@ -231,7 +240,7 @@
     </If>
     <TryCatch DisplayName="Try Catch Get transaction item" sap:VirtualizedContainerService.HintSize="526,876" sap2010:WorkflowViewState.IdRef="TryCatch_1">
       <TryCatch.Try>
-        <ui:GetQueueItem ContinueOnError="{x:Null}" sap2010:Annotation.AnnotationText="Get a transaction item from the specified Orchestrator queue.&#xA;If queues are not used in this process, replace this activity with the appropriated logic to retrieve transaction items.&#xA;For example, if transactions are rows from a DataTable, the row corresponding to the current transaction is retrieved at this point." DisplayName="Get transaction item" FolderPath="[in_Config(&quot;OrchestratorQueueFolder&quot;).ToString]" sap:VirtualizedContainerService.HintSize="450,287" sap2010:WorkflowViewState.IdRef="GetQueueItem_4" QueueType="[in_Config(&quot;OrchestratorQueueName&quot;).ToString]" TransactionItem="[out_TransactionItem]">
+        <ui:GetQueueItem ContinueOnError="{x:Null}" sap2010:Annotation.AnnotationText="Get a transaction item from the specified Orchestrator queue.&#xA;If queues are not used in this process, replace this activity with the appropriated logic to retrieve transaction items.&#xA;For example, if transactions are rows from a DataTable, the row corresponding to the current transaction is retrieved at this point." DisplayName="Get transaction item" FolderPath="[QueueFolder]" sap:VirtualizedContainerService.HintSize="450,287" sap2010:WorkflowViewState.IdRef="GetQueueItem_4" QueueType="[QueueName]" TransactionItem="[out_TransactionItem]">
           <ui:GetQueueItem.Reference>
             <InArgument x:TypeArguments="x:String" />
           </ui:GetQueueItem.Reference>
